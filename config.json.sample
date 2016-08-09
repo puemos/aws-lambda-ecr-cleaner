@@ -1,0 +1,22 @@
+{
+  "bucket": "your-destination-bucket",
+  "reduce": {
+      "directory": "reduced",
+      "quality": 90
+  },
+  "resizes": [
+    {
+      "size": 300,
+      "directory": "resized/small"
+    },
+    {
+      "size": 600,
+      "directory": "resized/middle"
+    },
+    {
+      "size": 900,
+      "directory": "resized/large",
+      "quality": 90
+    }
+  ]
+}

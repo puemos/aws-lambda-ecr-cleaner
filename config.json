@@ -1,0 +1,8 @@
+{
+    "bucket": "smallfish-media",
+    "resizes": [{
+        "size": 200
+    }, {
+        "size": 100
+    }]
+}
