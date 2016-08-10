@@ -29,26 +29,28 @@ It will create `aws-lambda-ecr-cleaner.zip` at project root. You can upload it.
 
 ### Configuration
 
-	1. Create config folder and inside index.js file
+	1. Copy the example
 ```bash
-$ mkdir config
-$ touch index.js
+$ cp config/index.example.js config/index.js 
 ```
 	2.	edit index.js
 
 ```javascript
 exports.REGION = <String>
-exports.DRY_RUN = <Boll>
-exports.REPO_TO_CLEAN = <String> || <Array<String>>
+exports.DRY_RUN = <Bool>
+exports.REPO_TO_CLEAN = <String> || <Array <String>>
 exports.REPO_AGE_THRESHOLD = <Int>
 exports.REPO_FIRST_N_THRESHOLD = <Int>
+exports.ENVS = <Array <String>>
 exports.AWS_ACCOUNT_ID = <Int>
 ```
 
 - `REGION`: ECR and ECS region.
 - `DRY_RUN`: Run without delete
 - `REPO_TO_CLEAN`: One repo name or an array of repos name to clean
-- `REPO_FIRST_N_THRESHOLD`: How many images from each environment to keep
+- `REPO_AGE_THRESHOLD`: Image age threshold
+- `ENVS` Group by these strings and one for each unique tag
+- `REPO_FIRST_N_THRESHOLD`: How many images from each group to keep
 - `AWS_ACCOUNT_ID`: The account id number
 
 ### License
