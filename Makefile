@@ -9,6 +9,7 @@ lambda:
 	@cp -R node_modules build/node_modules
 	@cp -R lib build/
 	@cp -R config build/
+	@rm build/config/index.example.js
 	@echo "Create package archive..."
 	@cd build && zip -rq aws-lambda-ecr-cleaner.zip .
 	@mv build/aws-lambda-ecr-cleaner.zip ./

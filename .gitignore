@@ -33,3 +33,6 @@ node_modules
 
 # config
 config/index.js
+
+# zip
+aws-lambda-ecr-cleaner.zip

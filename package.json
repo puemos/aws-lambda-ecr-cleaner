@@ -1,6 +1,6 @@
 {
   "name": "aws-lambda-ecr-cleaner",
-  "version": "0.8.0",
+  "version": "0.1.0",
   "description": "An AWS Lambda Function to clean ecr automatically",
   "author": "Shy Alter",
   "license": "MIT",
