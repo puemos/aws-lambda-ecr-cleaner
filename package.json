@@ -1,26 +1,26 @@
 {
-    "name": "aws-lambda-ecr-cleaner",
-    "version": "0.1.0",
-    "description": "An AWS Lambda Function to clean ecr automatically",
-    "author": "Shy Alter",
-    "license": "MIT",
-    "keywords": [
-        "aws",
-        "lambda",
-        "ecr",
-        "ecs"
-    ],
-    "dependencies": {
-        "aws-sdk": "^2.3.3",
-        "bluebird": "^3.3.5",
-        "lodash": "^4.11.0",
-        "ramda": "^0.22.1"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git@github.com:Puemos/aws-lambda-ecr-cleaner.git"
-    },
-    "bugs": {
-        "url": "https://github.com/Puemos/aws-lambda-ecr-cleaner/issues"
-    }
+  "name": "aws-lambda-ecr-cleaner",
+  "version": "0.2.0",
+  "description": "An AWS Lambda Function to clean ecr automatically",
+  "author": "Shy Alter",
+  "license": "MIT",
+  "keywords": [
+    "aws",
+    "lambda",
+    "ecr",
+    "ecs"
+  ],
+  "dependencies": {
+    "aws-sdk": "^2.3.3",
+    "bluebird": "^3.3.5",
+    "lodash": "^4.11.0",
+    "ramda": "^0.22.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Puemos/aws-lambda-ecr-cleaner.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Puemos/aws-lambda-ecr-cleaner/issues"
+  }
 }
