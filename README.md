@@ -2,6 +2,9 @@
 
 An AWS Lambda Function to clean ecr repos automatically. 
 
+[![NPM](https://nodei.co/npm/aws-lambda-ecr-cleaner.png?downloads=true)](https://nodei.co/npm/aws-lambda-ecr-cleaner/)
+
+
 ### Requirements
 
 - `node.js` ( AWS Lambda working version is **4.3.2** )
