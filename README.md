@@ -1,26 +1,24 @@
-## aws-lambda-ecr-cleaner
+# aws-lambda-ecr-cleaner
 
 An AWS Lambda Function to clean ecr repos automatically. 
 
-[![NPM](https://nodei.co/npm/aws-lambda-ecr-cleaner.png?downloads=true)](https://nodei.co/npm/aws-lambda-ecr-cleaner/)
 
-
-### Requirements
+## Requirements
 
 - `node.js` ( AWS Lambda working version is **4.3.2** )
 - `make`
 
-### Installation
+## Installation
 
 Clone this repository and install dependencies:
 
 ```bash
 $ git clone git@github.com:Puemos/aws-lambda-ecr-cleaner.git
 $ cd aws-lambda-ecr-cleaner
-$ npm install .
+$ npm install
 ```
 
-### Packaging
+## Packaging
 
 AWS Lambda accepts zip archived package. To create it, run `make lambda` task simply.
 
@@ -30,41 +28,31 @@ $ make lambda
 
 It will create `aws-lambda-ecr-cleaner.zip` at project root. You can upload it.
 
-### Configuration
+## Configuration
 
-	1. Copy the example
-```bash
-$ cp config/index.example.js config/index.js 
-```
-	2.	edit index.js
+### Hardcode the configuration on config.json
 
-```javascript
-exports.REGION = <String>
-exports.DRY_RUN = <Bool>
-exports.REPO_TO_CLEAN = <String> || <Array <String>>
-exports.REPO_AGE_THRESHOLD = <Int>
-exports.REPO_FIRST_N_THRESHOLD = <Int>
-exports.ENVS = <Array <String>>
-exports.AWS_ACCOUNT_ID = <Int>
-```
 
-- `REGION`: ECR and ECS region.
-- `DRY_RUN`: Run without delete
-- `REPO_TO_CLEAN`: One repo name or an array of repos name to clean
-- `REPO_AGE_THRESHOLD`: Image age threshold
-- `ENVS` Group by these strings and one for each unique tag
-- `REPO_FIRST_N_THRESHOLD`: How many images from each group to keep
-- `AWS_ACCOUNT_ID`: The account id number
+### Use AWS [Environment Variables](http://docs.aws.amazon.com/lambda/latest/dg/env_variables.html)
 
-### License
 
-MIT License.
+| Name                   | Type                  | Description                                        | Default   |
+|------------------------|-----------------------|----------------------------------------------------|-----------|
+| DRY_RUN                | Bool                  | Run without delete                                 | true      |
+| API_DELAY              | Integer               | Delay between calls                                | 500       |
+| REPO_AGE_THRESHOLD     | Integer               | Image age threshold                                | 90        |
+| REPO_FIRST_N_THRESHOLD | Integer               | How many images from each group to keep            | 3         |
+| AWS_ACCOUNT_ID         | Integer               | The account id number                              |           |
+| REGION                 | String                | ECR and ECS region.                                | us-east-1 |
+| REPO_TO_CLEAN          | String / Array String | One repo name or an array of repos name to clean   |           |
+| ENVS                   | Array String          | Group by these strings and one for each unique tag |           |
 
-### Author
+## License
 
-Shy Alter
+MIT License @ [Shy Alter](https://github.com/puemos/)
 
-### Credits
+
+## Credits
 
 - https://github.com/ysugimoto/aws-lambda-image
 - https://github.com/trek10inc/ecr-cleaner

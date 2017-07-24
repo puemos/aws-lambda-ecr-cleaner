@@ -6,6 +6,9 @@
   "license": "MIT",
   "keywords": [
     "aws",
+    "clean",
+    "cleaner",
+    "serverless",
     "lambda",
     "ecr",
     "ecs"
