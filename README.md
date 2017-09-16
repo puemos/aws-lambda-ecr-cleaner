@@ -1,3 +1,6 @@
+[![Code Climate](https://codeclimate.com/github/puemos/aws-lambda-ecr-cleaner/badges/gpa.svg)](https://codeclimate.com/github/puemos/aws-lambda-ecr-cleaner)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
 # aws-lambda-ecr-cleaner
 
 An AWS Lambda Function to clean ecr repos automatically. 
@@ -6,7 +9,6 @@ An AWS Lambda Function to clean ecr repos automatically.
 ## Requirements
 
 - `node.js` ( AWS Lambda working version is **4.3.2** )
-- `make`
 
 ## Installation
 
@@ -20,10 +22,10 @@ $ npm install
 
 ## Packaging
 
-AWS Lambda accepts zip archived package. To create it, run `make lambda` task simply.
+AWS Lambda accepts zip archived package. To create it, run `npm run package ` task simply.
 
 ```bash
-$ make lambda
+$ npm run package --packageDirectory=./dist
 ```
 
 It will create `aws-lambda-ecr-cleaner.zip` at project root. You can upload it.

@@ -51,41 +51,47 @@ const getRepoImages = (config, ecr) => {
  * @param {AWS.ECR.ImageIdentifierList} images Array of images names to be deleted
  * @returns {Promise<AWS.ECR.ImageIdentifierList>}
  */
-const deleteImages = (config, ecr, images) =>
-  new Promise(resolve => {
-    console.info('IMAGES TO DELETE:', images)
-    const imageTagsToDelete = images.map(image => ({
-      imageTag: image.split(':')[1]
-    }))
+const deleteImages = (config, ecr, images) => {
+  const batchImages = R.splitEvery(99, images)
+  return Promise.map(
+    batchImages,
+    imagesChunk =>
+      new Promise(resolve => {
+        console.info('IMAGES TO DELETE:', imagesChunk)
+        const imageTagsToDelete = imagesChunk.map(image => ({
+          imageTag: image.split(':')[1]
+        }))
 
-    console.info('IMAGE TAGS TO DELETE:', imageTagsToDelete)
+        console.info('IMAGE TAGS TO DELETE:', imageTagsToDelete)
 
-    // Make sure we are doing this for real
-    if (config.DRY_RUN || R.isEmpty(imageTagsToDelete)) {
-      resolve({
-        failures: [],
-        imagesDeleted: [],
-        count: 0
+        // Make sure we are doing this for real
+        if (config.DRY_RUN || R.isEmpty(imageTagsToDelete)) {
+          resolve({
+            failures: [],
+            imagesDeleted: [],
+            count: 0
+          })
+        }
+
+        const params = {
+          imageIds: imageTagsToDelete,
+          repositoryName: config.REPO_TO_CLEAN
+        }
+
+        // Batch delete all images in the deletionQueue
+        ecr
+          .batchDeleteImage(params)
+          .promise()
+          .then(deletions => {
+            resolve({
+              failures: deletions.failures,
+              imagesDeleted: deletions.imageIds,
+              count: R.keys(deletions.imageIds).length
+            })
+          })
       })
-    }
-
-    const params = {
-      imageIds: imageTagsToDelete,
-      repositoryName: config.REPO_TO_CLEAN
-    }
-
-    // Batch delete all images in the deletionQueue
-    ecr
-      .batchDeleteImage(params)
-      .promise()
-      .then(deletions => {
-        resolve({
-          failures: deletions.failures,
-          imagesDeleted: deletions.imageIds,
-          count: R.keys(deletions.imageIds).length
-        })
-      })
-  })
+  )
+}
 
 /**
  * Goes through all of ECS in a particular region and determines what is still

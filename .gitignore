@@ -31,8 +31,9 @@ node_modules
 # Optional REPL history
 .node_repl_history
 
-# config
-config/index.js
+# testing
+context.json
+event.json
 
 # zip
 aws-lambda-ecr-cleaner.zip

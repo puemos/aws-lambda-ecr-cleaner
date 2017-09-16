@@ -26,7 +26,7 @@ const configBuilder = (configJson, context) => {
   })
   if (!configJson.REPO_TO_CLEAN) {
     console.error('ERROR: NO REPO_TO_CLEAN, must be set')
-    return context.fail(new Error('Must set REPO_TO_CLEAN'))
+    throw new Error('Must set REPO_TO_CLEAN')
   }
   return config
 }
