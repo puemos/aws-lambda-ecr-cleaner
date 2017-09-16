@@ -1,4 +1,5 @@
-# aws-lambda-ecr-cleaner
+![drawing](https://user-images.githubusercontent.com/13174025/30515715-593664b4-9b2d-11e7-9512-73e12d7147ac.png) 
+# AWS lambda ecr cleaner
 
 [![Code Climate](https://codeclimate.com/github/puemos/aws-lambda-ecr-cleaner/badges/gpa.svg)](https://codeclimate.com/github/puemos/aws-lambda-ecr-cleaner)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
