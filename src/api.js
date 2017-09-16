@@ -106,7 +106,7 @@ const getAllImagesTagsByTaskDef = R.curry(
 const filterOutActiveImages = (config, ecr, ecs, eligibleForDeletion) => {
   console.info('BEFORE FILTER:', eligibleForDeletion)
 
-  const listTaskDefinitions = withNextToken(ecr.listTaskDefinitions, 'taskDefs', {
+  const listTaskDefinitions = utils.withNextToken(ecr.listTaskDefinitions, 'taskDefs', {
     status: 'ACTIVE'
   })
   return listTaskDefinitions([])
