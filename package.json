@@ -1,6 +1,6 @@
 {
   "name": "aws-lambda-ecr-cleaner",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "An AWS Lambda Function to clean ecr automatically",
   "author": "Shy Alter",
   "license": "MIT",
@@ -11,7 +11,15 @@
     "deploy": "node-lambda deploy",
     "cov": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
   },
-  "keywords": ["aws", "clean", "cleaner", "serverless", "lambda", "ecr", "ecs"],
+  "keywords": [
+    "aws",
+    "clean",
+    "cleaner",
+    "serverless",
+    "lambda",
+    "ecr",
+    "ecs"
+  ],
   "dependencies": {
     "aws-sdk": "^2.3.3",
     "bluebird": "^3.3.5",
