@@ -52,6 +52,55 @@ It will create `aws-lambda-ecr-cleaner.zip` at project root. You can upload it.
 | REPO_TO_CLEAN          | String / Array String | One repo name or an array of repos name to clean   |           |
 | ENVS                   | Array String          | Group by these strings and one for each unique tag |           |
 
+
+### Lambda IAM Role
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "LambdaBasicExecution",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Action": [
+                "ecr:BatchDeleteImage",
+                "ecr:ListImages",
+                "ecr:DescribeImages",
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        },
+        {
+            "Action": [
+                "ecs:DescribeTaskDefinition",
+                "ecs:ListTaskDefinitions"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ]
+}
+```
+
+
+For a more restrictive policy, you can specify the resources. See [ARNs and Namespace docs](http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#arn-syntax-ecr) for complete list.
+- ECR Resources:
+    - `"arn:aws:ecr:region:account:repository/my-repo"`
+    - `"arn:aws:ecr:region:account:repository/develop-*"`
+- ECS Resources
+    - `"arn:aws:ecs:region:account-id:task-definition/task-definition-family-name:task-definition-revision-number"`
+    - `"arn:aws:ecs:region:account-id:task-definition/task-definition-family-name:*"`
+    - `"arn:aws:ecs:region:account-id:task-definition/*"`
+
+
+
 ## License
 
 MIT License @ [Shy Alter](https://github.com/puemos/)
