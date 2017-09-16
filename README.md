@@ -1,9 +1,9 @@
-[![Code Climate](https://codeclimate.com/github/puemos/aws-lambda-ecr-cleaner/badges/gpa.svg)](https://codeclimate.com/github/puemos/aws-lambda-ecr-cleaner)
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-
 # aws-lambda-ecr-cleaner
 
 An AWS Lambda Function to clean ecr repos automatically. 
+[![Code Climate](https://codeclimate.com/github/puemos/aws-lambda-ecr-cleaner/badges/gpa.svg)](https://codeclimate.com/github/puemos/aws-lambda-ecr-cleaner)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![Coverage Status](https://coveralls.io/repos/github/puemos/aws-lambda-ecr-cleaner/badge.svg?branch=master)](https://coveralls.io/github/puemos/aws-lambda-ecr-cleaner?branch=master)
 
 
 ## Requirements

@@ -52,7 +52,6 @@ const createRepoUrl = R.curry(
 const getImageAgeDays = date => {
   const deltaMS = Date.now() - date * 1000
   const days = 1000 * 60 * 60 * 24
-  console.log(Math.round(deltaMS / days))
   return Math.round(deltaMS / days)
 }
 

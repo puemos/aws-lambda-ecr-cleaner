@@ -1,0 +1,46 @@
+[
+  {
+    "taskDefinition": {
+      "containerDefinitions": [
+        {
+          "cpu": 10,
+          "environment": [],
+          "essential": true,
+          "image": "123.dkr.ecr.no-where.amazonaws.com/hack:prod-precise-1",
+          "links": ["mysql"],
+          "memory": 500,
+          "mountPoints": [],
+          "name": "wordpress",
+          "portMappings": [
+            {
+              "containerPort": 80,
+              "hostPort": 80
+            }
+          ],
+          "volumesFrom": []
+        },
+        {
+          "cpu": 10,
+          "environment": [
+            {
+              "name": "MYSQL_ROOT_PASSWORD",
+              "value": "password"
+            }
+          ],
+          "essential": true,
+          "image": "123.dkr.ecr.no-where.amazonaws.com/hack:prod-precise-1",
+          "memory": 500,
+          "mountPoints": [],
+          "name": "mysql",
+          "portMappings": [],
+          "volumesFrom": []
+        }
+      ],
+      "family": "hello_world",
+      "revision": 10,
+      "taskDefinitionArn":
+        "arn:aws:ecs:us-east-1:012345678910:task-definition/hello_world:10",
+      "volumes": []
+    }
+  }
+]

@@ -1,5 +1,6 @@
 const Promise = require('bluebird')
 const R = require('ramda')
+const debug = require('debug')('aws-lambda-ecr-cleaner:Api')
 
 const utils = require('./utils')
 
@@ -32,18 +33,18 @@ const deleteImages = (config, ecr, images) => {
     batchImages,
     imagesChunk =>
       new Promise(resolve => {
-        console.info('IMAGES TO DELETE:', imagesChunk)
+        debug('IMAGES TO DELETE:', imagesChunk)
         const imageTagsToDelete = imagesChunk.map(image => ({
           imageTag: image.split(':')[1]
         }))
 
-        console.info('IMAGE TAGS TO DELETE:', imageTagsToDelete)
+        debug('IMAGE TAGS TO DELETE:', imageTagsToDelete)
 
         // Make sure we are doing this for real
         if (config.DRY_RUN || R.isEmpty(imageTagsToDelete)) {
           resolve({
             failures: [],
-            imagesDeleted: [],
+            success: [],
             count: 0
           })
         }
@@ -60,12 +61,21 @@ const deleteImages = (config, ecr, images) => {
           .then(deletions => {
             resolve({
               failures: deletions.failures,
-              imagesDeleted: deletions.imageIds,
+              success: deletions.imageIds,
               count: R.keys(deletions.imageIds).length
             })
           })
       })
-  )
+  ).then(batchResolts => {
+    return batchResolts.reduce(
+      (all, curr) => ({
+        failures: [].concat(all.failures).concat(curr.failures),
+        success: [].concat(all.success).concat(curr.success),
+        count: all.count + curr.count
+      }),
+      { failures: [], success: [], count: 0 }
+    )
+  })
 }
 
 /**
@@ -78,9 +88,9 @@ const deleteImages = (config, ecr, images) => {
  * @returns {Promise<AWS.ECR.ImageIdentifierList>}
  */
 const getAllImagesTagsByTaskDef = R.curry(
-  (config, ecs, taskDefs) =>
+  (config, ecs, taskDefinitionArns) =>
     new Promise(resolve => {
-      Promise.map(taskDefs.taskDefinitionArns, taskDefinitionARN =>
+      Promise.map(taskDefinitionArns, taskDefinitionARN =>
         // Get all active images from all container defintions
         ecs
           .describeTaskDefinition({ taskDefinition: taskDefinitionARN })
@@ -104,19 +114,19 @@ const getAllImagesTagsByTaskDef = R.curry(
  * @returns {Promise<AWS.ECR.ImageIdentifierList>}
  */
 const filterOutActiveImages = (config, ecr, ecs, eligibleForDeletion) => {
-  console.info('BEFORE FILTER:', eligibleForDeletion)
+  debug('BEFORE FILTER:', eligibleForDeletion)
 
-  const listTaskDefinitions = utils.withNextToken(ecr.listTaskDefinitions, 'taskDefs', {
+  const listTaskDefinitions = utils.withNextToken(ecs.listTaskDefinitions, 'taskDefinitionArns', {
     status: 'ACTIVE'
   })
   return listTaskDefinitions([])
     .then(getAllImagesTagsByTaskDef(config, ecs))
     .then(activeImages => {
       const activeImagesFlatten = R.compose(R.uniq, R.flatten)(activeImages)
-      console.log('ACTIVE IMAGES:', activeImagesFlatten)
+      debug('ACTIVE IMAGES:', activeImagesFlatten)
 
       // Remove images from deletion that are active
-      return R.difference(activeImagesFlatten, eligibleForDeletion)
+      return R.without(activeImagesFlatten, eligibleForDeletion)
     })
 }
 
@@ -131,7 +141,7 @@ const filterOutActiveImages = (config, ecr, ecs, eligibleForDeletion) => {
  * @returns {Promise<AWS.ECR.ImageIdentifierList>}
  */
 const filterImagesByDateThreshold = (config, ecr, images) => {
-  console.info('IMAGES TO PROCESS (filterImagesByDateThreshold):', images)
+  debug('IMAGES TO PROCESS (filterImagesByDateThreshold):', images)
 
   // No REPO_AGE_THRESHOLD so no images to filter
   if (!config.REPO_AGE_THRESHOLD) {
@@ -170,7 +180,7 @@ const filterImagesByDateThreshold = (config, ecr, images) => {
  * @returns {Promise<AWS.ECR.ImageIdentifierList>}
  */
 const filterImagesByFirstN = (config, ecr, images) => {
-  console.info('IMAGES TO PROCESS (filterImagesByFirstN):', images)
+  debug('IMAGES TO PROCESS (filterImagesByFirstN):', images)
 
   // No REPO_FIRST_N_THRESHOLD so no images to filter
   if (!config.REPO_FIRST_N_THRESHOLD) {
@@ -180,7 +190,7 @@ const filterImagesByFirstN = (config, ecr, images) => {
   const sortByCreated = R.sortBy(R.prop('created'))
   const groupByEnv = R.groupBy(image => {
     const tag = image.imageTag
-    const tagEnv = config.ENVS.find(env => R.contains(env, tag))
+    const tagEnv = (config.ENVS || []).find(env => R.contains(env, tag))
     return tagEnv || tag
   })
 
