@@ -14,7 +14,7 @@ const withNextToken = R.curry((callFn, resultPropName, initParams) => {
      * @param {string} nextToken 
      * @returns {Promise<any[]>}
      */
-  function recutionFn (prevResult, nextToken) {
+  return function recutionFn (prevResult, nextToken) {
     const params = Object.assign({}, initParams, {
       nextToken
     })
@@ -22,10 +22,12 @@ const withNextToken = R.curry((callFn, resultPropName, initParams) => {
       .promise()
       .then(res => {
         const nextResult = [].concat(prevResult || []).concat(res[resultPropName])
-        return res.nextToken ? recutionFn(nextResult, res.nextToken) : nextResult
+        return res.nextToken !== null ? recutionFn(nextResult, res.nextToken) : nextResult
       })
   }
 })
+
+const addTag = tag => (R.isEmpty(tag) ? '' : ':' + tag)
 
 /**
    *  Create a repo Url by the config and imageTag
@@ -36,7 +38,9 @@ const withNextToken = R.curry((callFn, resultPropName, initParams) => {
    */
 const createRepoUrl = R.curry(
   (config, imageTag) =>
-    `${config.AWS_ACCOUNT_ID}.dkr.ecr.${config.REGION}.amazonaws.com/${config.REPO_TO_CLEAN}:${imageTag}`
+    `${config.AWS_ACCOUNT_ID}.dkr.ecr.${config.REGION}.amazonaws.com/${config.REPO_TO_CLEAN}${addTag(
+      imageTag
+    )}`
 )
 
 /**
@@ -46,9 +50,10 @@ const createRepoUrl = R.curry(
    * @returns {number} number of days
    */
 const getImageAgeDays = date => {
-  const age = Date.now() - date.getTime()
+  const deltaMS = Date.now() - date * 1000
   const days = 1000 * 60 * 60 * 24
-  return Math.round(age / days)
+  console.log(Math.round(deltaMS / days))
+  return Math.round(deltaMS / days)
 }
 
 module.exports = {

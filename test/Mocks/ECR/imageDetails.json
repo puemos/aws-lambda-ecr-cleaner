@@ -1,0 +1,73 @@
+[
+  {
+    "imageDetails": [
+      {
+        "imageDigest":
+          "sha256:7c70a5ebcc7fcaa22974a71175ba674efce3951fbec624943c891e9d256927c1",
+        "imagePushedAt": 1452721263,
+        "imageSizeInBytes": 44194573,
+        "imageTags": ["dev-precise-1"],
+
+        "registryId": "012345678910",
+        "repositoryName": "ubuntu"
+      }
+    ],
+    "nextToken": "1"
+  },
+  {
+    "imageDetails": [
+      {
+        "imageDigest":
+          "sha256:abdc090336ba4503bd72d0961a4f3d45134900d9a793d3f0c06a64d2555fbab7",
+        "imagePushedAt": 1505578254,
+        "imageSizeInBytes": 39142127,
+        "imageTags": ["dev-precise-2"],
+        "registryId": "012345678910",
+        "repositoryName": "ubuntu"
+      }
+    ],
+    "nextToken": "2"
+  },
+  {
+    "imageDetails": [
+      {
+        "imageDigest":
+          "sha256:78dea3347768ba553ee8971cfb2dfa4c3efcd96db84ebfcdda59ba8d6057941b",
+        "imagePushedAt": 1452721207,
+        "imageSizeInBytes": 65747044,
+        "registryId": "012345678910",
+        "imageTags": ["prod-precise-1"],
+        "repositoryName": "ubuntu"
+      }
+    ],
+    "nextToken": "3"
+  },
+  {
+    "imageDetails": [
+      {
+        "imageDigest":
+          "sha256:7a64bc9c8843b0a8c8b8a7e4715b7615e4e1b0d8ca3c7e7a76ec8250899c397a",
+        "imagePushedAt": 1481916523,
+        "imageSizeInBytes": 50223482,
+        "imageTags": ["prod-precise-2"],
+        "registryId": "012345678910",
+        "repositoryName": "ubuntu"
+      }
+    ],
+    "nextToken": "4"
+  },
+  {
+    "imageDetails": [
+      {
+        "imageDigest":
+          "sha256:881befbe6f54c1e85029fe3a11554342bf765a0849600ecb8fa2f922798b4925",
+        "imagePushedAt": 1505578254,
+        "imageSizeInBytes": 65770577,
+        "imageTags": ["prod-precise-3"],
+        "registryId": "012345678910",
+        "repositoryName": "ubuntu"
+      }
+    ],
+    "nextToken": null
+  }
+]

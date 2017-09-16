@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "setup": "./node_modules/.bin/node-lambda setup",
-    "test": "./node_modules/.bin/node-lambda run",
+    "test": "./node_modules/.bin/ava test/**/*.test.js --verbose",
     "package": "./node_modules/.bin/node-lambda package",
     "deploy": "./node_modules/.bin/node-lambda deploy"
   },
@@ -34,6 +34,9 @@
     "url": "https://github.com/Puemos/aws-lambda-ecr-cleaner/issues"
   },
   "devDependencies": {
+    "ava": "^0.22.0",
+    "aws-sdk-mock": "^1.7.0",
+    "coveralls": "^2.13.1",
     "eslint": "^4.7.0",
     "eslint-config-airbnb-base": "^12.0.0",
     "eslint-config-standard": "^10.2.1",
@@ -41,6 +44,7 @@
     "eslint-plugin-node": "^5.1.1",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
-    "node-lambda": "^0.11.3"
+    "node-lambda": "^0.11.3",
+    "nyc": "^11.2.1"
   }
 }

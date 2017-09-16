@@ -1,0 +1,42 @@
+[
+  {
+    "imageIds": [
+      {
+        "imageDigest":
+          "sha256:f1d4ae3f7261a72e98c6ebefe9985cf10a0ea5bd762585a43e0700ed99863807",
+        "imageTag": "2016.09"
+      }
+    ],
+    "nextToken": "1"
+  },
+  {
+    "imageIds": [
+      {
+        "imageDigest":
+          "sha256:f1d4ae3f7261a72e98c6ebefe9985cf10a0ea5bd762585a43e0700ed99863807",
+        "imageTag": "2017.05"
+      }
+    ],
+    "nextToken": "2"
+  },
+  {
+    "imageIds": [
+      {
+        "imageDigest":
+          "sha256:f1d4ae3f7261a72e98c6ebefe9985cf10a0ea5bd762585a43e0700ed99863807",
+        "imageTag": "2017.09"
+      }
+    ],
+    "nextToken": "3"
+  },
+  {
+    "imageIds": [
+      {
+        "imageDigest":
+          "sha256:f1d4ae3f7261a72e98c6ebefe9985cf10a0ea5bd762585a43e0700ed99863807",
+        "imageTag": "latest"
+      }
+    ],
+    "nextToken": null
+  }
+]

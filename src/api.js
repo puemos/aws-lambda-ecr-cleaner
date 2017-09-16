@@ -209,7 +209,7 @@ const filterImagesByFirstN = (config, ecr, images) => {
       R.map(R.prop('imageTag')),
       R.unnest,
       R.values,
-      R.map(R.takeLast(config.REPO_FIRST_N_THRESHOLD)),
+      R.map(R.dropLast(config.REPO_FIRST_N_THRESHOLD)),
       groupByEnv,
       sortByCreated
     )(imagesAndDays)
