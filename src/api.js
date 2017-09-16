@@ -1,56 +1,7 @@
 const Promise = require('bluebird')
 const R = require('ramda')
 
-/**
- * helper function for calles with next token
- * 
- * @param {Function} callFn 
- * @param {Object} initParams 
- * @param {string} resultPropName 
- * @return {function}
- */
-const withNextToken = R.curry((callFn, resultPropName, initParams) => {
-  /**
-   * @param {any[]} prevResult 
-   * @param {string} nextToken 
-   * @returns {Promise<any[]>}
-   */
-  function recutionFn (prevResult, nextToken) {
-    const params = Object.assign({}, initParams, {
-      nextToken
-    })
-    return callFn(params)
-      .promise()
-      .then(res => {
-        const nextResult = [].concat(prevResult || []).concat(res[resultPropName])
-        return res.nextToken ? recutionFn(nextResult, res.nextToken) : nextResult
-      })
-  }
-})
-
-/**
- *  Create a repo Url by the config and imageTag
- *
- * @param {Config} config Global config object
- * @param {AWS.ECR} ecr ECR API
- * @returns {AWS.ECR.Url}
- */
-const createRepoUrl = R.curry(
-  (config, imageTag) =>
-    `${config.AWS_ACCOUNT_ID}.dkr.ecr.${config.REGION}.amazonaws.com/${config.REPO_TO_CLEAN}:${imageTag}`
-)
-
-/**
- * Convert ts to days
- *
- * @param {Date} date
- * @returns {number} number of days
- */
-function getImageAgeDays (date) {
-  const age = Date.now() - date.getTime()
-  const days = 1000 * 60 * 60 * 24
-  return Math.round(age / days)
-}
+const utils = require('./utils')
 
 /**
  *
@@ -60,7 +11,7 @@ function getImageAgeDays (date) {
  * @returns {Promise<AWS.ECR.ImageIdentifierList>}
  */
 const getRepoImages = (config, ecr) => {
-  const listImages = withNextToken(ecr.listImages, 'imageIds', {
+  const listImages = utils.withNextToken(ecr.listImages, 'imageIds', {
     repositoryName: config.REPO_TO_CLEAN
   })
   return listImages([])
@@ -187,26 +138,25 @@ const filterImagesByDateThreshold = (config, ecr, images) => {
     return []
   }
 
-  const describeImages = withNextToken(ecr.describeImages, 'imageDetails', {
+  const describeImages = utils.withNextToken(ecr.describeImages, 'imageDetails', {
     imageIds: images,
     repositoryName: config.REPO_TO_CLEAN
   })
 
-  return describeImages([])
-    .then(imageDetails =>
-      // Get all tags eligible for deletion by age threshold
-      // coerce each of the tags to a full image reference for easy comparison
-      imageDetails
-        .map(image => {
-          const created = image.imagePushedAt
-          const imageTag = R.propOr('', 0, image.imageTags)
-          if (created && imageTag !== 'latest' && getImageAgeDays(created) >= config.REPO_AGE_THRESHOLD) {
-            return createRepoUrl(config, imageTag)
-          }
-          return null
-        })
-        .filter(R.identity)
-    )
+  return describeImages([]).then(imageDetails =>
+    // Get all tags eligible for deletion by age threshold
+    // coerce each of the tags to a full image reference for easy comparison
+    imageDetails
+      .map(image => {
+        const created = image.imagePushedAt
+        const imageTag = R.propOr('', 0, image.imageTags)
+        if (created && imageTag !== 'latest' && utils.getImageAgeDays(created) >= config.REPO_AGE_THRESHOLD) {
+          return utils.createRepoUrl(config, imageTag)
+        }
+        return null
+      })
+      .filter(R.identity)
+  )
 }
 
 /**
@@ -234,37 +184,36 @@ const filterImagesByFirstN = (config, ecr, images) => {
     return tagEnv || tag
   })
 
-  const describeImages = withNextToken(ecr.describeImages, 'imageDetails', {
+  const describeImages = utils.withNextToken(ecr.describeImages, 'imageDetails', {
     imageIds: images,
     repositoryName: config.REPO_TO_CLEAN
   })
 
-  return describeImages([])
-    .then(imageDetails => {
-      // Get all tags eligible for deletion by age threshold
-      // coerce each of the tags to a full image reference for easy comparison
-      const imagesAndDays = imageDetails
-        .map(image => {
-          const created = image.imagePushedAt
-          const imageTag = R.propOr('', 0, image.imageTags)
+  return describeImages([]).then(imageDetails => {
+    // Get all tags eligible for deletion by age threshold
+    // coerce each of the tags to a full image reference for easy comparison
+    const imagesAndDays = imageDetails
+      .map(image => {
+        const created = image.imagePushedAt
+        const imageTag = R.propOr('', 0, image.imageTags)
 
-          return {
-            created: created || -Infinity,
-            imageTag
-          }
-        })
-        .filter(R.identity)
+        return {
+          created: created || -Infinity,
+          imageTag
+        }
+      })
+      .filter(R.identity)
 
-      return R.compose(
-        R.map(createRepoUrl(config)),
-        R.map(R.prop('imageTag')),
-        R.unnest,
-        R.values,
-        R.map(R.takeLast(config.REPO_FIRST_N_THRESHOLD)),
-        groupByEnv,
-        sortByCreated
-      )(imagesAndDays)
-    })
+    return R.compose(
+      R.map(utils.createRepoUrl(config)),
+      R.map(R.prop('imageTag')),
+      R.unnest,
+      R.values,
+      R.map(R.takeLast(config.REPO_FIRST_N_THRESHOLD)),
+      groupByEnv,
+      sortByCreated
+    )(imagesAndDays)
+  })
 }
 
 module.exports = {
