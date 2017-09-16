@@ -1,0 +1,7 @@
+{
+  "DRY_RUN": true,
+  "REGION": "us-east-1",
+  "REPO_AGE_THRESHOLD": 90,
+  "REPO_FIRST_N_THRESHOLD": 3,
+  "API_DELAY": 500
+}

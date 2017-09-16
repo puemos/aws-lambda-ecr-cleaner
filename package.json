@@ -4,6 +4,12 @@
   "description": "An AWS Lambda Function to clean ecr automatically",
   "author": "Shy Alter",
   "license": "MIT",
+  "scripts": {
+    "setup": "./node_modules/.bin/node-lambda setup",
+    "test": "./node_modules/.bin/node-lambda run",
+    "package": "./node_modules/.bin/node-lambda package",
+    "deploy": "./node_modules/.bin/node-lambda deploy"
+  },
   "keywords": [
     "aws",
     "clean",
@@ -16,6 +22,7 @@
   "dependencies": {
     "aws-sdk": "^2.3.3",
     "bluebird": "^3.3.5",
+    "debug": "^3.0.1",
     "lodash": "^4.11.0",
     "ramda": "^0.22.1"
   },
@@ -25,5 +32,15 @@
   },
   "bugs": {
     "url": "https://github.com/Puemos/aws-lambda-ecr-cleaner/issues"
+  },
+  "devDependencies": {
+    "eslint": "^4.7.0",
+    "eslint-config-airbnb-base": "^12.0.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "node-lambda": "^0.11.3"
   }
 }
