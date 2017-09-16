@@ -2,6 +2,33 @@ const Promise = require('bluebird')
 const R = require('ramda')
 
 /**
+ * helper function for calles with next token
+ * 
+ * @param {Function} callFn 
+ * @param {Object} initParams 
+ * @param {string} resultPropName 
+ * @return {function}
+ */
+const withNextToken = R.curry((callFn, resultPropName, initParams) => {
+  /**
+   * @param {any[]} prevResult 
+   * @param {string} nextToken 
+   * @returns {Promise<any[]>}
+   */
+  function recutionFn (prevResult, nextToken) {
+    const params = Object.assign({}, initParams, {
+      nextToken
+    })
+    return callFn(params)
+      .promise()
+      .then(res => {
+        const nextResult = [].concat(prevResult || []).concat(res[resultPropName])
+        return res.nextToken ? recutionFn(nextResult, res.nextToken) : nextResult
+      })
+  }
+})
+
+/**
  *  Create a repo Url by the config and imageTag
  *
  * @param {Config} config Global config object
@@ -33,13 +60,10 @@ function getImageAgeDays (date) {
  * @returns {Promise<AWS.ECR.ImageIdentifierList>}
  */
 const getRepoImages = (config, ecr) => {
-  const params = {
+  const listImages = withNextToken(ecr.listImages, 'imageIds', {
     repositoryName: config.REPO_TO_CLEAN
-  }
-  return ecr
-    .listImages(params)
-    .promise()
-    .then(R.prop('imageIds'))
+  })
+  return listImages([])
 }
 
 /**
@@ -79,7 +103,7 @@ const deleteImages = (config, ecr, images) => {
         }
 
         // Batch delete all images in the deletionQueue
-        ecr
+        return ecr
           .batchDeleteImage(params)
           .promise()
           .then(deletions => {
@@ -96,20 +120,21 @@ const deleteImages = (config, ecr, images) => {
 /**
  * Goes through all of ECS in a particular region and determines what is still
  * marked as active and in use containers at a Task level (not actual running tasks)
- *
+ * 
+ * @param {Config} config Global config object 
  * @param {AWS.ECS} ecs ECS API
  * @param {Array<AWS.ECS.TaskDefinition>} taskDefs Array of images to be filtered by active
  * @returns {Promise<AWS.ECR.ImageIdentifierList>}
  */
 const getAllImagesTagsByTaskDef = R.curry(
-  (ecs, taskDefs) =>
+  (config, ecs, taskDefs) =>
     new Promise(resolve => {
       Promise.map(taskDefs.taskDefinitionArns, taskDefinitionARN =>
         // Get all active images from all container defintions
         ecs
           .describeTaskDefinition({ taskDefinition: taskDefinitionARN })
           .promise()
-          // .tap(() => Promise.delay(config.API_DELAY))
+          .tap(() => Promise.delay(config.API_DELAY))
           .then(R.pathOr([], ['taskDefinition', 'containerDefinitions']))
           .then(containerDefinitions => containerDefinitions.map(R.prop('image')))
           .then(resolve)
@@ -129,20 +154,19 @@ const getAllImagesTagsByTaskDef = R.curry(
  */
 const filterOutActiveImages = (config, ecr, ecs, eligibleForDeletion) => {
   console.info('BEFORE FILTER:', eligibleForDeletion)
-  return (
-    ecs
-      .listTaskDefinitions({ status: 'ACTIVE' })
-      .promise()
-      // .tap(() => Promise.delay(config.API_DELAY))
-      .then(getAllImagesTagsByTaskDef(ecs))
-      .then(activeImages => {
-        const activeImagesFlatten = R.compose(R.uniq, R.flatten)(activeImages)
-        console.log('ACTIVE IMAGES:', activeImagesFlatten)
 
-        // Remove images from deletion that are active
-        return R.difference(activeImagesFlatten, eligibleForDeletion)
-      })
-  )
+  const listTaskDefinitions = withNextToken(ecr.listTaskDefinitions, 'taskDefs', {
+    status: 'ACTIVE'
+  })
+  return listTaskDefinitions([])
+    .then(getAllImagesTagsByTaskDef(config, ecs))
+    .then(activeImages => {
+      const activeImagesFlatten = R.compose(R.uniq, R.flatten)(activeImages)
+      console.log('ACTIVE IMAGES:', activeImagesFlatten)
+
+      // Remove images from deletion that are active
+      return R.difference(activeImagesFlatten, eligibleForDeletion)
+    })
 }
 
 /**
@@ -163,15 +187,12 @@ const filterImagesByDateThreshold = (config, ecr, images) => {
     return []
   }
 
-  const params = {
+  const describeImages = withNextToken(ecr.describeImages, 'imageDetails', {
     imageIds: images,
     repositoryName: config.REPO_TO_CLEAN
-  }
+  })
 
-  return ecr
-    .describeImages(params)
-    .promise()
-    .then(R.propOr([], 'imageDetails'))
+  return describeImages([])
     .then(imageDetails =>
       // Get all tags eligible for deletion by age threshold
       // coerce each of the tags to a full image reference for easy comparison
@@ -213,15 +234,12 @@ const filterImagesByFirstN = (config, ecr, images) => {
     return tagEnv || tag
   })
 
-  const params = {
+  const describeImages = withNextToken(ecr.describeImages, 'imageDetails', {
     imageIds: images,
     repositoryName: config.REPO_TO_CLEAN
-  }
+  })
 
-  return ecr
-    .describeImages(params)
-    .promise()
-    .then(R.propOr([], 'imageDetails'))
+  return describeImages([])
     .then(imageDetails => {
       // Get all tags eligible for deletion by age threshold
       // coerce each of the tags to a full image reference for easy comparison
