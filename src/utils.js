@@ -14,7 +14,7 @@ const withNextToken = R.curry((callFn, resultPropName, initParams) => {
      * @param {string} nextToken 
      * @returns {Promise<any[]>}
      */
-  return function recutionFn (prevResult, nextToken) {
+  return function recursionFn (prevResult, nextToken) {
     const params = Object.assign({}, initParams, {
       nextToken
     })
@@ -22,7 +22,7 @@ const withNextToken = R.curry((callFn, resultPropName, initParams) => {
       .promise()
       .then(res => {
         const nextResult = [].concat(prevResult || []).concat(res[resultPropName])
-        return res.nextToken !== null ? recutionFn(nextResult, res.nextToken) : nextResult
+        return res.nextToken !== null ? recursionFn(nextResult, res.nextToken) : nextResult
       })
   }
 })
